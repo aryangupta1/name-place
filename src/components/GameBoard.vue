@@ -26,9 +26,6 @@
         <button @click="finishGame" class="px-6 py-2 bg-red-500 hover:bg-red-600 rounded shadow">
           Finish Game
         </button>
-        <button @click="clearEntries" class="px-6 py-2 bg-red-500 hover:bg-red-600 rounded shadow">
-          Clear Entries
-        </button>
       </div>
     </div>
     <Scorecard v-if="!gameStarted && gameFinished"/>
