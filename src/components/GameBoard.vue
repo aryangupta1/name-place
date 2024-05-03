@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-lg mx-auto px-4 space-y-8">
+  <div class="w-full max-w-lg mx-auto px-4 space-y-4">
     <div v-if="!gameStarted" class="text-center">
       <button
         @click="startGame"
@@ -8,7 +8,7 @@
         Start Game
       </button>
     </div>
-    <div v-if="gameStarted" class="space-y-8">
+    <div v-if="gameStarted" class="space-y-4">
       <div class="text-center">
         <button
           @click="copyLink"
@@ -86,7 +86,11 @@ const letterRef = dbRef(db, `gameState/${sessionId.value}/currentLetter`);
 // Initialize letter from Firebase on component mount and set up real-time listening
 onMounted(() => {
   if (!new URLSearchParams(window.location.search).get("session")) {
-    window.history.pushState({}, '', `${window.location.pathname}?session=${sessionId.value}`);
+    window.history.pushState(
+      {},
+      "",
+      `${window.location.pathname}?session=${sessionId.value}`
+    );
   }
 
   // Listen to changes in the current letter
@@ -98,7 +102,8 @@ onMounted(() => {
 
 function generateLetter() {
   const possibleLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const randomLetter = possibleLetters[Math.floor(Math.random() * possibleLetters.length)];
+  const randomLetter =
+    possibleLetters[Math.floor(Math.random() * possibleLetters.length)];
   set(letterRef, randomLetter);
 }
 
@@ -132,9 +137,10 @@ function finishGame() {
 }
 
 function copyLink() {
-  navigator.clipboard.writeText(shareableLink.value)
+  navigator.clipboard
+    .writeText(shareableLink.value)
     .then(() => alert("Game link copied to clipboard!"))
-    .catch(err => console.error("Error copying link: ", err));
+    .catch((err) => console.error("Error copying link: ", err));
 }
 
 function resetEntries() {
@@ -143,7 +149,6 @@ function resetEntries() {
   }
 }
 </script>
-
 
 <style scoped>
 input[type="text"] {
