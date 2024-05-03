@@ -45,6 +45,7 @@
           />
         </div>
       </div>
+      <br>
       <div class="flex justify-between">
         <button
           @click="saveEntries"
