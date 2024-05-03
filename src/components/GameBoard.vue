@@ -83,26 +83,28 @@ const shareableLink = computed(() => `${baseLink}/?session=${sessionId.value}`);
 
 const letterRef = dbRef(db, `gameState/${sessionId.value}/currentLetter`);
 
+// Initialize letter from Firebase on component mount and set up real-time listening
 onMounted(() => {
   if (!new URLSearchParams(window.location.search).get("session")) {
-    window.history.pushState(
-      {},
-      "",
-      `${window.location.pathname}?session=${sessionId.value}`
-    );
+    window.history.pushState({}, '', `${window.location.pathname}?session=${sessionId.value}`);
   }
+
+  // Listen to changes in the current letter
+  onValue(letterRef, (snapshot) => {
+    const data = snapshot.val();
+    currentLetter.value = data; // Update current letter whenever it changes in Firebase
+  });
 });
 
 function generateLetter() {
   const possibleLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const randomLetter =
-    possibleLetters[Math.floor(Math.random() * possibleLetters.length)];
+  const randomLetter = possibleLetters[Math.floor(Math.random() * possibleLetters.length)];
   set(letterRef, randomLetter);
 }
 
 const gameStarted = ref(false);
 const gameFinished = ref(false);
-const currentLetter = ref(""); // No initial value
+const currentLetter = ref(""); // Initialize with empty string
 const currentEntries = reactive({
   Name: "",
   Place: "",
@@ -130,10 +132,9 @@ function finishGame() {
 }
 
 function copyLink() {
-  navigator.clipboard
-    .writeText(shareableLink.value)
+  navigator.clipboard.writeText(shareableLink.value)
     .then(() => alert("Game link copied to clipboard!"))
-    .catch((err) => console.error("Error copying link: ", err));
+    .catch(err => console.error("Error copying link: ", err));
 }
 
 function resetEntries() {
@@ -142,6 +143,7 @@ function resetEntries() {
   }
 }
 </script>
+
 
 <style scoped>
 input[type="text"] {
