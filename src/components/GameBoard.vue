@@ -34,13 +34,13 @@
         <div
           v-for="(value, key) in currentEntries"
           :key="key"
-          class="bg-gray-800 p-4 rounded-lg"
+          class="bg-gray-800 rounded-lg"
         >
           <input
             v-model="currentEntries[key]"
             :id="key"
             :placeholder="`Enter ${key}`"
-            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+            class="w-full px-4 py-3 rounded-lg"
             autocomplete="off"
           />
         </div>
