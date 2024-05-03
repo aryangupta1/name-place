@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-lg mx-auto px-4 space-y-4">
+  <div class="w-full max-w-lg mx-auto px-4">
     <div v-if="!gameStarted" class="text-center">
       <button
         @click="startGame"
@@ -8,7 +8,7 @@
         Start Game
       </button>
     </div>
-    <div v-if="gameStarted" class="space-y-4">
+    <div v-if="gameStarted">
       <div class="text-center">
         <button
           @click="copyLink"
@@ -17,7 +17,7 @@
           Share Game Link
         </button>
       </div>
-      <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+      <div class="p-4 text-center">
         <h2 class="text-xl font-bold text-white">
           Current Letter: {{ currentLetter || "Not set" }}
         </h2>
