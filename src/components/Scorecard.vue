@@ -1,27 +1,27 @@
 <template>
-  <div class="bg-gray-800 text-white p-4 rounded-lg shadow max-w-md mx-auto mt-6">
+  <div class="bg-gray-800 text-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto mt-8">
     <div v-if="!showFinalScore">
-      <h2 class="text-2xl font-bold text-center mb-4">Game Results</h2>
-      <div v-if="results.length" class="space-y-4">
-        <ul class="list-disc list-inside text-sm">
-          <li v-for="(result, index) in results" :key="index">
-            <strong>Round {{ index + 1 }}:</strong>
-            <ul>
-              <li v-for="(value, key) in result.entries" :key="key">
-                <input type="checkbox" v-model="value.checked">
-                {{ key }}: {{ value.value }}
-              </li>
-            </ul>
-          </li>
-        </ul>
-        <div class="text-center mt-4">
-          <p>Total Score: {{ totalScore }}</p>
+      <h2 class="text-2xl font-bold text-center mb-6">Game Results</h2>
+      <div v-if="results.length" class="space-y-6">
+        <div v-for="(result, index) in results" :key="index" class="bg-gray-700 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold text-purple-300 mb-2">Round {{ index + 1 }}</h3>
+          <ul class="list-none space-y-2">
+            <li v-for="(value, key) in result.entries" :key="key" class="flex items-center justify-between">
+              <label class="flex items-center">
+                <input type="checkbox" v-model="value.checked" class="form-checkbox h-5 w-5 text-purple-500">
+                <span class="ml-2">{{ key }}: {{ value.value }}</span>
+              </label>
+            </li>
+          </ul>
         </div>
-        <button @click="completeReview" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded shadow mx-auto block">
+        <div class="text-center mt-4">
+          <p class="text-xl">Total Score: {{ totalScore }}</p>
+        </div>
+        <button @click="completeReview" class="w-full px-6 py-2 mt-4 bg-blue-500 hover:bg-blue-600 rounded shadow">
           Complete
         </button>
       </div>
-      <div v-else class="text-center text-gray-500">
+      <div v-else class="text-center text-gray-400">
         <p>No results to display.</p>
       </div>
     </div>
@@ -72,4 +72,9 @@ function completeReview() {
 </script>
 
 <style scoped>
+.form-checkbox {
+  border-radius: 0.375rem; /* Tailwind default for rounded-md */
+  background-color: transparent;
+  border-color: #9ca3af; /* Gray-400 */
+}
 </style>
