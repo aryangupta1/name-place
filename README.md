@@ -1,21 +1,14 @@
-# Vue 3 + Vite
+# Name Place
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Rules
+If you wish to play with others click on *Share Game Link* to generate a shareable link to send to your friends. Once you have done that generate a letter - this letter will be common for all players. Once this is complete you need to enter a:
+- Name
+- Place
+- Animal
+- Thing
+- Food
 
-While this project uses Vue.js, Vite supports many popular JS frameworks. [See all the supported frameworks](https://vitejs.dev/guide/#scaffolding-your-first-vite-project).
+The first player to complete filling out all entries can click *Stop* which will freeze the other players from entering any more answers. Click save to submit your answers and then generate a new letter to proceed to the next round.
 
-## Deploy Your Own
+Once you have completed the desirable number of playing rounds click on *Finish Game* to review and mark your answers from previous rounds. Once done, click *Complete* to view your final score.
 
-Deploy your own Vite project with Vercel.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/vercel/tree/main/examples/vite&template=vite)
-
-_Live Example: https://vite-vue-template.vercel.app_
-
-### Deploying From Your Terminal
-
-You can deploy your new Vite project with a single command from your terminal using [Vercel CLI](https://vercel.com/download):
-
-```shell
-$ vercel
-```
