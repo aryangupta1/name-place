@@ -51,43 +51,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed } from 'vue'
 
-const results = ref([]);
-const showFinalScore = ref(false);
+const results = ref([])
+const showFinalScore = ref(false)
 
 onMounted(() => {
-  loadResults();
-});
+  loadResults()
+})
 
 function loadResults() {
-  const savedData = sessionStorage.getItem("gameData");
+  const savedData = sessionStorage.getItem('gameData')
   if (savedData) {
-    const loadedResults = JSON.parse(savedData);
+    const loadedResults = JSON.parse(savedData)
     loadedResults.forEach((result) => {
-      const newEntries = {};
+      const newEntries = {}
       for (const key in result) {
-        newEntries[key] = { value: result[key], checked: false };
+        newEntries[key] = { value: result[key], checked: false }
       }
-      result.entries = newEntries;
-    });
-    results.value = loadedResults;
+      result.entries = newEntries
+    })
+    results.value = loadedResults
   }
 }
 
 const totalScore = computed(() => {
-  let score = 0;
+  let score = 0
   results.value.forEach((result) => {
     for (const key in result.entries) {
-      if (result.entries[key].checked) score += 1;
+      if (result.entries[key].checked) score += 1
     }
-  });
-  return score;
-});
+  })
+  return score
+})
 
 function completeReview() {
-  showFinalScore.value = true;
-  sessionStorage.removeItem("gameData");
+  showFinalScore.value = true
+  sessionStorage.removeItem('gameData')
 }
 </script>
 
