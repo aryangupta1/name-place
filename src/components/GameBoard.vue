@@ -41,11 +41,23 @@
             :id="key"
             :placeholder="`Enter ${key}`"
             class="w-full px-4 py-3 rounded-lg"
+            :disabled="stop"
             autocomplete="off"
           />
         </div>
       </div>
-      <br>
+      <br />
+      <div class="flex flex-col items-center">
+        <!-- Conditionally render the Stop button if the game link has been shared -->
+        <button
+          v-if="shared"
+          @click="stopEntries"
+          class="px-6 py-3 bg-red-500 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg transition duration-150 ease-in-out"
+        >
+          Stop
+        </button>
+      </div>
+      <br />
       <div class="flex justify-between">
         <button
           @click="saveEntries"
@@ -60,6 +72,7 @@
           Finish Game
         </button>
       </div>
+      <br />
     </div>
     <Scorecard v-if="!gameStarted && gameFinished" />
   </div>
@@ -67,11 +80,16 @@
 
 <script setup>
 import { reactive, ref, onMounted, computed } from "vue";
-import { getDatabase, ref as dbRef, onValue, set } from "firebase/database";
+import {
+  getDatabase,
+  ref as dbRef,
+  onValue,
+  set,
+  update,
+} from "firebase/database";
 import Scorecard from "./Scorecard.vue";
 
 const db = getDatabase();
-
 let sessionId = ref(
   new URLSearchParams(window.location.search).get("session") ||
     Date.now().toString(36) + Math.random().toString(36).substring(2)
@@ -81,36 +99,13 @@ const baseLink =
     ? "http://localhost:8080"
     : "https://name-place.vercel.app";
 const shareableLink = computed(() => `${baseLink}/?session=${sessionId.value}`);
-
-const letterRef = dbRef(db, `gameState/${sessionId.value}/currentLetter`);
-
-// Initialize letter from Firebase on component mount and set up real-time listening
-onMounted(() => {
-  if (!new URLSearchParams(window.location.search).get("session")) {
-    window.history.pushState(
-      {},
-      "",
-      `${window.location.pathname}?session=${sessionId.value}`
-    );
-  }
-
-  // Listen to changes in the current letter
-  onValue(letterRef, (snapshot) => {
-    const data = snapshot.val();
-    currentLetter.value = data; // Update current letter whenever it changes in Firebase
-  });
-});
-
-function generateLetter() {
-  const possibleLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const randomLetter =
-    possibleLetters[Math.floor(Math.random() * possibleLetters.length)];
-  set(letterRef, randomLetter);
-}
+const gameStateRef = dbRef(db, `gameState/${sessionId.value}`);
 
 const gameStarted = ref(false);
 const gameFinished = ref(false);
-const currentLetter = ref(""); // Initialize with empty string
+const currentLetter = ref("");
+const shared = ref(false);
+const stop = ref(false);
 const currentEntries = reactive({
   Name: "",
   Place: "",
@@ -120,6 +115,31 @@ const currentEntries = reactive({
 });
 const allEntries = ref([]);
 
+onMounted(() => {
+  if (!new URLSearchParams(window.location.search).get("session")) {
+    window.history.pushState(
+      {},
+      "",
+      `${window.location.pathname}?session=${sessionId.value}`
+    );
+  }
+  onValue(gameStateRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      currentLetter.value = data.currentLetter;
+      shared.value = data.shared;
+      stop.value = data.stop;
+    }
+  });
+});
+
+function generateLetter() {
+  const possibleLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const randomLetter =
+    possibleLetters[Math.floor(Math.random() * possibleLetters.length)];
+  update(gameStateRef, { currentLetter: randomLetter, stop: false });
+}
+
 function startGame() {
   gameStarted.value = true;
   gameFinished.value = false;
@@ -127,9 +147,14 @@ function startGame() {
 }
 
 function saveEntries() {
-  allEntries.value.push({ ...currentEntries });
-  sessionStorage.setItem("gameData", JSON.stringify(allEntries.value));
-  resetEntries();
+  if (Object.values(currentEntries).some((value) => value.trim() !== "")) {
+    allEntries.value.push({ ...currentEntries });
+    sessionStorage.setItem("gameData", JSON.stringify(allEntries.value));
+    update(gameStateRef, { entries: allEntries.value });
+    resetEntries();
+  } else {
+    alert("Cannot save as all fields are empty.");
+  }
 }
 
 function finishGame() {
@@ -140,8 +165,15 @@ function finishGame() {
 function copyLink() {
   navigator.clipboard
     .writeText(shareableLink.value)
-    .then(() => alert("Game link copied to clipboard!"))
+    .then(() => {
+      alert("Game link copied to clipboard!");
+      update(gameStateRef, { shared: true });
+    })
     .catch((err) => console.error("Error copying link: ", err));
+}
+
+function stopEntries() {
+  update(gameStateRef, { stop: true });
 }
 
 function resetEntries() {
